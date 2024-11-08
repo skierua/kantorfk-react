@@ -1,0 +1,30 @@
+{
+  "short_name": "KantorFK",
+  "name": "Кантор файний курс",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "116x88",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo-kfk-s-48.png",
+      "type": "image/png",
+      "sizes": "339x48"
+    },
+    {
+      "src": "logo-kfk-sbw-48.png",
+      "type": "image/png",
+      "sizes": "350x48"
+    },
+     {
+      "src": "logo-kfk-sbwi-48.png",
+      "type": "image/png",
+      "sizes": "344x48"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
