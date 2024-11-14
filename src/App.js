@@ -102,7 +102,9 @@ function App(props) {
                 <Badge
                   badgeContent={offers.length}
                   color={
-                    prevOfferCount.current == offers.length ? "info" : "warning"
+                    page === 1 || prevOfferCount.current == offers.length
+                      ? "info"
+                      : "warning"
                   }
                 >
                   <FavoriteIcon />

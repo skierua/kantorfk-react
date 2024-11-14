@@ -165,6 +165,16 @@ $endpoints_post["auth"] = function ($post): void {
         echo json_encode(array('token' => '', 'errstr'=>'Authorization error.'));
         exit();
     }
+    // $cus = "";
+    // if (($crnt_user[1] == "owner")){
+    //     $cus = "BULK";
+    // } else {
+    //     if ($post->usr == "ownerwife"){
+    //         $cus = "FEYA";
+    //     } else {
+    //         $cus = $post->usr;
+    //     }
+    // }
     $cus = (($crnt_user[1] == "owner") ? "BULK" : $post->usr);
     $vheader = '{ "alg": "HS256", "typ": "JWT"}';
     // term - login terminal

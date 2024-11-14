@@ -1,5 +1,5 @@
-const PATH_TO_SERVER = "http://localhost/api/v2"; // for local testings
-// const PATH_TO_SERVER = "/api/v2"; // for deployment
+// const PATH_TO_SERVER = "http://localhost/api/v2"; // for local testings
+const PATH_TO_SERVER = "/api/v2"; // for deployment
 
 /**
  * payload

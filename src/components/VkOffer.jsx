@@ -43,6 +43,7 @@ export const VkOffer = (props) => {
         // if (k === lst.length) {
         lst.push({
           id: v.chid,
+          sname: v.chid,
           name: v.name,
           so: Number(v.sortorder),
         });

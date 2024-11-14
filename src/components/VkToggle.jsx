@@ -11,19 +11,24 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 /**
  *
  * @param {*} props
- * fcb: callback function
+ * @data item list {id:string, sname||name:string, name||sname:string}
+ * @dflt {string} default item id
+ * @limit {string|nuber} toggle limit
+ * @label {string} SELECT label
+ * @allowAll {bool} allow item all
+ * @fcb callback function
  * @returns
  */
 export const VkToggle = (props) => {
   const { data, dflt, limit, label, allowAll, fcb, ...other } = props;
   const [crnt, setCrnt] = useState(dflt ?? "");
   //   console.log(JSON.stringify(data));
-  const dlimit = 5; // default limit
+  const dlimit = limit ?? 5; // default limit
   const dallowAll = true; // default allowAll
 
   //   console.log(`${data} ${dflt} ${limit ?? 5}`);
   useEffect(() => {
-    // console.log(`#257 AdmOffer/useEffect started`);
+    // console.log(`#257 Offer/useEffect started`);
     if (fcb !== undefined) {
       fcb(crnt);
     }
@@ -32,7 +37,7 @@ export const VkToggle = (props) => {
 
   return (
     <Box {...other}>
-      {data.length <= (limit ?? dlimit) && (
+      {data.length <= dlimit && (
         // <FormControl sx={{ m: 1 }}>
         <FormControl>
           <ToggleButtonGroup
@@ -57,14 +62,14 @@ export const VkToggle = (props) => {
                   value={v.id}
                   aria-label={v.id}
                 >
-                  {v.name}
+                  {v.sname ?? v.name}
                 </ToggleButton>
               );
             })}
           </ToggleButtonGroup>
         </FormControl>
       )}
-      {data.length > (limit ?? dlimit) && (
+      {data.length > dlimit && (
         // <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
         <FormControl sx={{ minWidth: 120 }} size="small">
           <InputLabel id="labelSel">{label ?? ""}</InputLabel>
@@ -83,7 +88,7 @@ export const VkToggle = (props) => {
             {data.map((v) => {
               return (
                 <MenuItem key={v.id} value={v.id}>
-                  {v.name}
+                  {v.name ?? v.sname}
                 </MenuItem>
               );
             })}

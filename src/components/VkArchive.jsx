@@ -23,6 +23,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { LineChart } from "@mui/x-charts/LineChart";
 
+import { VkToggle } from "./VkToggle";
+
 export const VkArchive = (props) => {
   const { sqldata, freload, ...other } = props;
   const [fltcur, setFltcur] = useState("840"); // currency filter
@@ -112,34 +114,18 @@ export const VkArchive = (props) => {
             />
             {/* </DemoContainer> */}
           </LocalizationProvider>
-          <FormControl sx={{ minWidth: 130 }} size="small">
-            <ToggleButtonGroup
-              id="offercur"
-              value={fltcur}
-              onChange={(e) => setFltcur(e.target.value)}
-              aria-label="Currency toggle"
-              size="small"
-              exclusive
-              // sx={{ justifyContent: "center" }}
-            >
-              {[
-                { id: "840", chid: "USD" },
-                { id: "978", chid: "EUR" },
-                { id: "985", chid: "PLN" },
-              ].map((v) => {
-                return (
-                  <ToggleButton
-                    id={`tglcur_${v.chid}`}
-                    key={`tglcur_${v.chid}`}
-                    value={v.id}
-                    aria-label={v.chid}
-                  >
-                    {v.chid}
-                  </ToggleButton>
-                );
-              })}
-            </ToggleButtonGroup>
-          </FormControl>
+          <VkToggle
+            data={[
+              { id: "840", sname: "USD" },
+              { id: "978", sname: "EUR" },
+              { id: "985", sname: "PLN" },
+            ]}
+            dflt={fltcur}
+            limit={3}
+            label="Валюта"
+            allowAll={false}
+            fcb={(v) => setFltcur(v)}
+          />
         </Stack>
         <LineChart
           //   width="100%"
