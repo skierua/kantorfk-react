@@ -19,7 +19,8 @@ import { VkFooter } from "./components/VkFooter";
 import { VkHeader } from "./components/VkHeader";
 import { VkRate } from "./components/VkRate";
 import { VkOffer } from "./components/VkOffer";
-import { getData } from "./driver";
+// import { getData } from "./driver";
+import { PATH_TO_SSE, getData } from "./driver";
 
 function App(props) {
   // document.title = "КанторФК";
@@ -31,16 +32,22 @@ function App(props) {
   const [error, setError] = useState(null);
   const prevOfferCount = useRef(0);
 
-  const delayRate = 200; // 200sec
-  const delayOffer = 210; // 200sec
+  // const delayRate = 200; // 200sec
+  // const delayOffer = 210; // 200sec
   const dfltKnt = "CITY";
+
+  const sortRates = (v) => {
+    return v.sort((a, b) => {
+      return Number(a.sortorder) - Number(b.sortorder);
+    });
+  };
 
   const loadRate = async () => {
     // console.log(`#8y3 App/loadRate started`);
     await getData(
       "/rates",
-      `shop=${dfltKnt}&reqid=ratebulk`,
-      (v) => setRates(v),
+      "reqid=sse",
+      (d) => setRates(sortRates(d)),
       (b) => setError(b)
     );
   };
@@ -49,8 +56,8 @@ function App(props) {
     // console.log(`#12u App/loadOffer started`);
     await getData(
       "/offers",
-      "reqid=sel",
-      (v) => setOffers(v),
+      "reqid=sse",
+      (d) => setOffers(d),
       (b) => setError(b)
     );
   };
@@ -66,20 +73,25 @@ function App(props) {
     );
   };
 
-  // loadRate, loadOffer
   useEffect(() => {
-    // console.log(`#34hn useEffect started`);
-    // return;
     loadRate();
-    loadOffer();
-    const tmrRate = setInterval(loadRate, 1000 * delayRate); //
-    const tmrOffer = setInterval(loadOffer, 1000 * delayOffer); //
-    // const tmr = setInterval(load, 5000); // for testing
+    setTimeout(loadOffer, 500);
+    // const evtSource = new EventSource("https://test.kantorfk.com/api/vb1/sse");
+    const evtSource = new EventSource(`${PATH_TO_SSE}`);
+    setTimeout(() => {
+      evtSource.addEventListener("offer_stream", (event) => {
+        setOffers(JSON.parse(event.data).rslt);
+        // console.log(`offer_stream:`);
+      });
+      evtSource.addEventListener("rate_stream", (event) => {
+        setRates(JSON.parse(event.data).rslt);
+        // console.log("rate_stream: ");
+      });
+    }, 5000);
     return () => {
-      clearInterval(tmrRate);
-      clearInterval(tmrOffer);
+      evtSource.close();
     };
-  }, [delayRate, delayOffer, dfltKnt]);
+  }, []);
 
   const menu_onChange = (event, newValue) => {
     setPage(newValue);
@@ -115,7 +127,12 @@ function App(props) {
             <BottomNavigationAction label="Архів" icon={<ArchiveIcon />} />
           </BottomNavigation>
         </Box>
-        {page === 0 && <VkRate sqldata={rates} maxWidth={"480px"} />}
+        {page === 0 && (
+          <VkRate
+            data={rates.filter((v) => v.shop == dfltKnt)}
+            maxWidth={"480px"}
+          />
+        )}
         {page === 1 && <VkOffer sqldata={offers} />}
         {page === 2 && (
           <VkArchive sqldata={archRates} freload={handleArchive_reload} />

@@ -54,65 +54,6 @@ export const VkOffer = (props) => {
     });
   };
 
-  const Offer = (props) => {
-    const { v } = props;
-    return (
-      <Paper elevation={3} sx={{ padding: 1, minWidth: 300 }}>
-        <Stack
-          width={"100%"}
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          {v.bidask === "bid" ? (
-            <CircleIcon fontSize="small" color="success" />
-          ) : (
-            <CircleIcon fontSize="small" color="info" />
-          )}
-          <Typography>{v.bidask === "bid" ? "куплю" : "продам"}</Typography>
-          <Avatar
-            alt={v.chid}
-            src={`./flag/${v.curid}.svg`}
-            sx={{
-              width: 24,
-              height: 24,
-              border: "solid lightgrey 1px",
-            }}
-          />
-          <Typography>{v.chid}</Typography>
-          <Typography variant="button" fontSize={"125%"}>
-            {Number(v.price).toPrecision(4)}
-          </Typography>
-          <Typography variant="caption">{hd(v.tm)}</Typography>
-        </Stack>
-        <Stack
-          width={"100%"}
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <Typography>{v.name}</Typography>
-          <Stack direction={"row"} gap={0.5}>
-            <CallIcon fontSize="small" />
-            {v.tel}
-          </Stack>
-        </Stack>
-        <Typography>{`від ${
-          Math.abs(v.amnt) < 1500 ? "500" : "1 000"
-        } до ${Math.abs(v.amnt).toLocaleString("uk-UA")}`}</Typography>
-        {v.onote !== undefined && v.onote !== "" && (
-          <Box
-            bgcolor={"whitesmoke"}
-            color={"whitesmoke.contrastText"}
-            p={"2px"}
-          >
-            <Typography>{v.onote}</Typography>
-          </Box>
-        )}
-      </Paper>
-    );
-  };
-
   return (
     sqldata.length !== 0 && (
       <Box {...other}>
@@ -177,6 +118,64 @@ export const VkOffer = (props) => {
         </Stack>
       </Box>
     )
+  );
+};
+
+const Offer = (props) => {
+  const { v } = props;
+  return (
+    <Paper elevation={3} sx={{ padding: 1, minWidth: 300 }}>
+      <Stack
+        width={"100%"}
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        {v.bidask === "bid" ? (
+          <CircleIcon fontSize="small" color="success" />
+        ) : (
+          <CircleIcon fontSize="small" color="info" />
+        )}
+        <Typography>{v.bidask === "bid" ? "куплю" : "продам"}</Typography>
+        <Avatar
+          alt={v.chid}
+          src={`./flag/${v.curid}.svg`}
+          sx={{
+            width: 24,
+            height: 24,
+            border: "solid lightgrey 1px",
+          }}
+        />
+        <Typography>{v.chid}</Typography>
+        <Typography variant="button" fontSize={"125%"}>
+          {Number(v.price).toPrecision(4)}
+        </Typography>
+        <Typography variant="caption">{hd(v.tm)}</Typography>
+      </Stack>
+      <Stack
+        width={"100%"}
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        <Typography>{v.name}</Typography>
+        <Typography>{`до ${Math.abs(v.amnt).toLocaleString(
+          "uk-UA"
+        )}`}</Typography>
+      </Stack>
+      {/* <Typography>{`від ${
+        Math.abs(v.amnt) < 1500 ? "500" : "1 000"
+        } до ${Math.abs(v.amnt).toLocaleString("uk-UA")}`}</Typography> */}
+      <Stack direction={"row"} gap={0.5}>
+        <CallIcon fontSize="small" />
+        {v.tel}
+      </Stack>
+      {v.onote !== undefined && v.onote !== "" && (
+        <Box bgcolor={"whitesmoke"} color={"whitesmoke.contrastText"} p={"2px"}>
+          <Typography>{v.onote}</Typography>
+        </Box>
+      )}
+    </Paper>
   );
 };
 

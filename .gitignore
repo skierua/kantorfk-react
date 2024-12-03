@@ -2,8 +2,6 @@
 
 # prodaction authorization
 
-_*.php
-
 # dependencies
 /node_modules
 /.pnp

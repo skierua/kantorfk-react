@@ -1,5 +1,11 @@
-// const PATH_TO_SERVER = "http://localhost/api/v2"; // for local testings
-const PATH_TO_SERVER = "/api/v2"; // for deployment
+// for local testings
+// const PATH_TO_SSE = "http://localhost/api/va1/sse"; // for local testings
+// const PATH_TO_SERVER = "http://localhost/api/va1"; // for local testings
+
+// for deployment
+const PATH_TO_SERVER = "https://kantorfk.com/api/v3"; // for deployment
+const PATH_TO_SSE = "https://kantorfk.com/api/v3/sse"; // for deployment testings
+//
 
 /**
  * payload
@@ -141,4 +147,14 @@ function parse(raw) {
   }
 }
 
-export { pld, postFetch, getFetch, authFetch, parse, getData, postData };
+export {
+  PATH_TO_SERVER,
+  PATH_TO_SSE,
+  pld,
+  postFetch,
+  getFetch,
+  authFetch,
+  parse,
+  getData,
+  postData,
+};

@@ -62,28 +62,6 @@ export const VkArchive = (props) => {
     return () => {};
   }, [fltcur, fltprd]);
 
-  const Row = (props) => {
-    const { itm } = props;
-
-    return (
-      <TableRow
-        sx={{
-          "&:last-child td, &:last-child th": { border: 0 },
-        }}
-      >
-        <TableCell align="center">
-          <Typography>{itm.period}</Typography>
-        </TableCell>
-        <TableCell align="center">
-          <Typography>{itm.bid.toFixed(2)}</Typography>
-        </TableCell>
-        <TableCell align="center">
-          <Typography>{itm.ask.toFixed(2)}</Typography>
-        </TableCell>
-      </TableRow>
-    );
-  };
-
   useEffect(() => {
     freload({
       period: fltprd,
@@ -180,5 +158,27 @@ export const VkArchive = (props) => {
         </Alert>
       </Container>
     </React.Fragment>
+  );
+};
+
+const Row = (props) => {
+  const { itm } = props;
+
+  return (
+    <TableRow
+      sx={{
+        "&:last-child td, &:last-child th": { border: 0 },
+      }}
+    >
+      <TableCell align="center">
+        <Typography>{itm.period}</Typography>
+      </TableCell>
+      <TableCell align="center">
+        <Typography>{itm.bid.toFixed(2)}</Typography>
+      </TableCell>
+      <TableCell align="center">
+        <Typography>{itm.ask.toFixed(2)}</Typography>
+      </TableCell>
+    </TableRow>
   );
 };

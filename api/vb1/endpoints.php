@@ -395,14 +395,23 @@ $endpoints_post["checktoken"] = function ($requestData): void {
  * ServerSendEvent
  * 
  */
-$endpoints_get["sse"] = function ($post, $token): void { 
+$endpoints_get["sse"] = function ($requestData): void { 
     // header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
     // header("Access-Control-Allow-Origin: http://localhost:3000");
     header("Content-Type: text/event-stream");
     header("Cache-Control: no-cache");
 
+    // echo PATH_TO_SSE;
     $counter =0;
     $vquery = "";
+    $key = "";
+    $ev = "";
+    $resp = array();
+    $mem = new Memcached();
+    // $mem->addServer("127.0.0.1", 11211); // wrong
+    // $mem->addServer("/home/g32062/.memcached/memcached.sock", 11211);
+    $mem->addServer(PATH_TO_SSE, 11211);
+    // $mem->flush();  // for TESTING only
     while (true) {
         // if (!($counter % 3)) {
         //     $resp = parseToken($token);
@@ -417,18 +426,47 @@ $endpoints_get["sse"] = function ($post, $token): void {
         //     }
         // }
         if (!($counter % 3)) {
+            $ev = "offer_stream";
             $vquery = "SELECT vk_offer_crnc.id as oid,  vk_currency.id as curid, chid, name, coalesce(vk_currency.qty,'1') qty, shop, bidask, amnt, price, tel, vk_offer_crnc.note as onote, tm, sortorder FROM vk_offer_crnc join vk_currency on(atclcode=chid) order by tm desc;";
-            echo "event: offer_stream\n";
-            echo "data: " . json_encode(sqlReq($vquery)) . "\n";
-            // echo "data: offers\n";
+            $resp = sqlReq_mem($vquery, $mem);
+
+
+
+
+            /* $key = "KEY" . md5($vquery);
+            if (!($resp = $mem->get($key))) {
+                $resp = sqlReq($vquery);
+                if (!($mem->set($key, $resp,5))) {
+                    echo ": Memcached ERROR ".$mem->getResultCode()."\n";
+                };
+                echo ": from DataBase key=$key\n";
+            } else {
+                echo ": from Memcached key=$key\n";
+            } */
+
+            echo "event: $ev\n";
+            echo "data: " . json_encode($resp) . "\n";
             echo "\n\n";
         }
-        if (!($counter % 5)) {
+        if (!($counter % 2)) {
+            $ev = "rate_stream";
             $vquery = "SELECT atclcode, vk_rate.qty as rqty, bid, ask, bidtm, asktm, shop, chid, name, case vk_currency.qty when '' then 1 else vk_currency.qty end as cqty, "
             ."sortorder, pricecode as prc FROM vk_rate join vk_currency on (atclcode=id) where sortorder!='' order by sortorder;";
-            echo "event: rate_stream\n";
-            echo "data: " . json_encode(sqlReq($vquery)) . "\n";
-            // echo "data: rates\n";
+            $resp = sqlReq_mem($vquery, $mem);
+
+            /*$key = "KEY" . md5($vquery);
+            // $key = "rate_stream";
+            if (!($resp = $mem->get($key))) {
+                $resp = sqlReq($vquery);
+                if (!($mem->set($key, $resp, MEMCACHED_TTL))) {
+                    echo ": Memcached ERROR ".$mem->getResultCode()."\n";
+                };
+                echo ": from DataBase key=$key\n";
+            } else {
+                echo ": from Memcached key=$key\n";
+            } */
+            echo "event: $ev\n";
+            echo "data: " . json_encode($resp) . "\n";
             echo "\n\n";
         }
         if (ob_get_contents()) {
