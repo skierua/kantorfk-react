@@ -15,12 +15,13 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import Box from "@mui/material/Box";
 
 import { VkArchive } from "./components/VkArchive";
+import { VkBulk } from "./components/VkBulk";
 import { VkFooter } from "./components/VkFooter";
 import { VkHeader } from "./components/VkHeader";
 import { VkRate } from "./components/VkRate";
 import { VkOffer } from "./components/VkOffer";
 // import { getData } from "./driver";
-import { PATH_TO_SSE, getData } from "./driver";
+import { getData } from "./driver";
 
 function App(props) {
   // document.title = "КанторФК";
@@ -34,9 +35,13 @@ function App(props) {
 
   // const delayRate = 200; // 200sec
   // const delayOffer = 210; // 200sec
+  const dfltBulk = "BULK";
   const dfltKnt = "CITY";
+  const delayRate = 35; // delay for rates reload
+  const delayOffer = 25; // delay for offers reload
 
   const sortRates = (v) => {
+    // console.log(`#43y App/sortRates started` + JSON.stringify(v));
     return v.sort((a, b) => {
       return Number(a.sortorder) - Number(b.sortorder);
     });
@@ -46,7 +51,7 @@ function App(props) {
     // console.log(`#8y3 App/loadRate started`);
     await getData(
       "/rates",
-      "reqid=sse",
+      "reqid=sse2",
       (d) => setRates(sortRates(d)),
       (b) => setError(b)
     );
@@ -65,15 +70,35 @@ function App(props) {
   const handleArchive_reload = async (v) => {
     await getData(
       "/archive",
-      `reqid=ratesAvrg&period=${v.period.toISOString().substring(0, 7)}&cur=${
+      `reqid=ratesAvrg&period=${v.period.toISOString().substring(0, 10)}&cur=${
         v.cur
       }`,
       (v) => setArchRates(v),
       (b) => setError(b)
     );
   };
+  useEffect(() => {
+    if (page === 0 && rates.filter((v) => v.shop === dfltBulk).length === 0) {
+      setPage(1);
+    }
+    return () => {};
+  }, [rates]);
 
   useEffect(() => {
+    // console.log(`#34hn useEffect started`);
+    // return;
+    loadRate();
+    loadOffer();
+    const tmrRate = setInterval(loadRate, 1000 * delayRate); //
+    const tmrOffer = setInterval(loadOffer, 1000 * delayOffer); //
+    // const tmr = setInterval(load, 5000); // for testing
+    return () => {
+      clearInterval(tmrRate);
+      clearInterval(tmrOffer);
+    };
+  }, []);
+
+  /*useEffect(() => {
     loadRate();
     setTimeout(loadOffer, 500);
     // const evtSource = new EventSource("https://test.kantorfk.com/api/vb1/sse");
@@ -91,11 +116,11 @@ function App(props) {
     return () => {
       evtSource.close();
     };
-  }, []);
+  }, []); */
 
   const menu_onChange = (event, newValue) => {
     setPage(newValue);
-    if (newValue == 1) {
+    if (newValue === 1) {
       prevOfferCount.current = offers.length;
     }
   };
@@ -105,16 +130,29 @@ function App(props) {
       <VkHeader />
       <Container maxWidth="xl" align="center">
         {/* <Box sx={{ width: "100%" }}> */}
-        <Box width="100%" maxWidth={"sm"}>
-          <BottomNavigation showLabels value={page} onChange={menu_onChange}>
-            <BottomNavigationAction label="Курси" icon={<PriceChangeIcon />} />
+        <Box width="100%" maxWidth={"sm"} mb={1}>
+          <BottomNavigation
+            showLabels
+            value={page}
+            onChange={menu_onChange}
+            sx={{ backgroundColor: "#ebf2f0" }}
+          >
+            <BottomNavigationAction
+              label="ГУРТ"
+              icon={<PriceChangeIcon />}
+              disabled={!rates.filter((v) => v.shop === dfltBulk).length}
+            />
+            <BottomNavigationAction
+              label="Роздріб"
+              icon={<PriceChangeIcon />}
+            />
             <BottomNavigationAction
               label="Заявки"
               icon={
                 <Badge
                   badgeContent={offers.length}
                   color={
-                    page === 1 || prevOfferCount.current == offers.length
+                    page === 1 || prevOfferCount.current === offers.length
                       ? "info"
                       : "warning"
                   }
@@ -128,13 +166,19 @@ function App(props) {
           </BottomNavigation>
         </Box>
         {page === 0 && (
-          <VkRate
-            data={rates.filter((v) => v.shop == dfltKnt)}
+          <VkBulk
+            data={rates.filter((v) => v.shop === dfltBulk)}
             maxWidth={"480px"}
           />
         )}
-        {page === 1 && <VkOffer sqldata={offers} />}
-        {page === 2 && (
+        {page === 1 && (
+          <VkRate
+            data={rates.filter((v) => v.shop === dfltKnt)}
+            maxWidth={"480px"}
+          />
+        )}
+        {page === 2 && <VkOffer sqldata={offers} />}
+        {page === 3 && (
           <VkArchive sqldata={archRates} freload={handleArchive_reload} />
         )}
         {error && (
