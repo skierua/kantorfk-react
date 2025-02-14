@@ -1,10 +1,10 @@
 // for local testings
-// const PATH_TO_SSE = "http://localhost/api/va1/sse"; // for local testings
-// const PATH_TO_SERVER = "http://localhost/api/va1"; // for local testings
+// const PATH_TO_SSE = "http://localhost/api/v4/sse"; // for local testings
+// const PATH_TO_SERVER = "http://localhost/api/v4"; // for local testings
 
 // for deployment
-const PATH_TO_SERVER = "https://kantorfk.com/api/v3"; // for deployment
-const PATH_TO_SSE = "https://kantorfk.com/api/v3/sse"; // for deployment testings
+const PATH_TO_SERVER = "https://kantorfk.com/api/v4"; // for deployment
+const PATH_TO_SSE = "https://kantorfk.com/api/v4/sse"; // for deployment
 //
 
 /**
@@ -13,7 +13,7 @@ const PATH_TO_SSE = "https://kantorfk.com/api/v3/sse"; // for deployment testing
  * @returns payload
  */
 function pld(t) {
-  if (t == undefined || t == "") {
+  if (t === undefined || t === "") {
     return { crntuser: "", term: "", role: "", user: "" }; // payload
   } else {
     return JSON.parse(window.atob(t.split(".")[1])); // payload
@@ -35,7 +35,6 @@ const postFetch = async (path, token, jdata) => {
       "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     },
     body: "data=" + JSON.stringify(jdata),
-    // body: `key=${MN_SID}&usr=${CRNTUSER.name}&query=${vquery}`,
   });
   return resp;
 };
@@ -109,6 +108,7 @@ const getData = async (path, query, callback, error) => {
   })
     .then((resp) => resp.json())
     .then((jresp) => {
+      // console.log(`${PATH_TO_SERVER}${path}${query}` + JSON.stringify(jresp));
       callback(jresp.rslt);
       error(null);
     })

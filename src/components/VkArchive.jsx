@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+// import ToggleButton from "@mui/material/ToggleButton";
+// import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import {
   TableContainer,
   Table,
@@ -14,12 +14,12 @@ import {
   TableCell,
   Stack,
 } from "@mui/material";
-import { FormControl } from "@mui/material";
 
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// import { DemoContainer } from "@mui/x-date-pickers/DemoContainer";
 
 import { LineChart } from "@mui/x-charts/LineChart";
 
@@ -29,29 +29,23 @@ export const VkArchive = (props) => {
   const { sqldata, freload, ...other } = props;
   const [fltcur, setFltcur] = useState("840"); // currency filter
   const [fltprd, setFltprd] = useState(new Date()); // period filter
+  const [chartData, setChartData] = useState([]); //
 
   // view data
-  const vd = () => {
-    let ret = [];
-    for (let i = 0; i < sqldata.length; ++i) {
-      ret.push({
-        period: sqldata[i].period.slice(-2),
-        bid: Number(sqldata[i].beq) / Number(sqldata[i].bamnt), //.toFixed(2)
-        ask: Number(sqldata[i].aeq) / Number(sqldata[i].aamnt), //.toFixed(2)
-      });
-    }
-    return ret;
-  };
-
-  /*const period_onChange = (v) => {
-    // console.log(`#83jm VkArchive/period_onChange newDate=${v}`);
-    let dd = new Date(v);
-    setFltprd(dd);
-    freload({
-      period: dd,
-      cur: fltcur,
-    });
-  };*/
+  // const vd = () => {
+  //   let ret = [];
+  //   for (let i = 0; i < sqldata.length; ++i) {
+  //     ret.push({
+  //       tm: sqldata[i].period, //.slice(-2),
+  //       idx: i,
+  //       period: sqldata[i].period.slice(-4).replace("-", ""),
+  //       bid: Number(sqldata[i].beq) / Number(sqldata[i].bamnt), //.toFixed(2)
+  //       ask: Number(sqldata[i].aeq) / Number(sqldata[i].aamnt), //.toFixed(2)
+  //     });
+  //   }
+  //   console.log(ret);
+  //   return ret;
+  // };
 
   useEffect(() => {
     // console.log("VkArchive useEffect startes");
@@ -70,6 +64,22 @@ export const VkArchive = (props) => {
     return () => {};
   }, []);
 
+  useEffect(() => {
+    let ret = [];
+    for (let i = 0; i < sqldata.length; ++i) {
+      ret.push({
+        x: sqldata[i].period, //.slice(-2),
+        // idx: i,
+        period: sqldata[i].period.slice(-4).replace("-", ""),
+        bid: Number(sqldata[i].beq) / Number(sqldata[i].bamnt), //.toFixed(2)
+        ask: Number(sqldata[i].aeq) / Number(sqldata[i].aamnt), //.toFixed(2)
+      });
+    }
+    // console.log(ret);
+    setChartData(ret);
+    return () => {};
+  }, [sqldata]);
+
   return (
     <React.Fragment {...other}>
       <CssBaseline />
@@ -78,13 +88,13 @@ export const VkArchive = (props) => {
           <LocalizationProvider dateAdapter={AdapterDayjs} padding="none">
             {/* <DemoContainer components={["DatePicker"]}> */}
             <DatePicker
-              label="Період"
-              views={["month", "year"]}
+              label="Місяць до"
+              views={["day", "month", "year"]}
               slotProps={{ textField: { size: "small" } }}
               value={dayjs(fltprd)}
               // value={dayjs(period)}
               onChange={(v) => setFltprd(new Date(v))}
-              format="YYYY-MM"
+              format="DD-MM-YY"
               // minDate="01-01-2024"
               closeOnSelect={true}
               disableFuture={true}
@@ -120,8 +130,16 @@ export const VkArchive = (props) => {
               showMark: false, //({ index }) => index % 4 === 0,
             },
           ]}
-          xAxis={[{ dataKey: "period", max: 31 }]}
-          dataset={vd()}
+          // xAxis={[{ scaleType: "band", dataKey: "month" }]}
+          xAxis={[
+            {
+              dataKey: "x",
+              scaleType: "point",
+              valueFormatter: (value) => value.slice(-2),
+              // max: 31,
+            },
+          ]}
+          dataset={chartData}
         />
         <TableContainer>
           <Table size="small" aria-label="a dense table">
@@ -139,11 +157,9 @@ export const VkArchive = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {vd()
-                .reverse()
-                .map((v) => {
-                  return <Row id={v.period} key={v.period} itm={v} />;
-                })}
+              {chartData.map((v) => {
+                return <Row id={v.period} key={v.period} itm={v} />;
+              })}
             </TableBody>
           </Table>
         </TableContainer>
@@ -171,7 +187,12 @@ const Row = (props) => {
       }}
     >
       <TableCell align="center">
-        <Typography>{itm.period}</Typography>
+        <Typography>
+          {Intl.DateTimeFormat("uk-UA", {
+            day: "numeric",
+            month: "short",
+          }).format(new Date(itm.x))}
+        </Typography>
       </TableCell>
       <TableCell align="center">
         <Typography>{itm.bid.toFixed(2)}</Typography>
