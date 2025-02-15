@@ -3,7 +3,7 @@ import { Alert, Box, Stack, Typography } from "@mui/material";
 import { RateTbl } from "./VkRateTbl";
 // import { Icon_Flag_BG, Icon_Flag_US } from "material-ui-country-flags";
 
-const headBgColor = "#57ba98";
+// const headBgColor = "#57ba98";
 
 /**
  *
@@ -32,13 +32,13 @@ export const VkBulk = (props) => {
         <RateTbl
           data={data.filter((v) => Number(v.domestic) === 2 && v.prc === "")}
           title={"ГУРТ основні валюти"}
-          bgcolor={headBgColor}
+          bulk={true}
           tm={lch()}
         />
         <RateTbl
           data={data.filter((v) => Number(v.domestic) === 6 && v.prc === "")}
           title={"Конвертація"}
-          bgcolor={headBgColor}
+          bulk={true}
           // tm={lch()}
         />
         {data.filter((v) => Number(v.domestic) === 8 && v.prc === "").length !==
@@ -46,7 +46,7 @@ export const VkBulk = (props) => {
           <RateTbl
             data={data.filter((v) => Number(v.domestic) === 8 && v.prc === "")}
             title={"Крипта"}
-            bgcolor={headBgColor}
+            bulk={true}
           />
         )}
         <Alert

@@ -11,11 +11,11 @@ import { grey } from "@mui/material/colors";
 const colorset = ["#f2f2f2", "#57ba98", grey[800]];
 
 export const RateTbl = (props) => {
-  const { data, title, bgcolor, tm, ...other } = props;
+  const { data, bulk, title, bgcolor, tm, ...other } = props;
   return (
     <TableContainer component={Paper}>
       <Table size="small" aria-label="a dense table">
-        <RateTblHead title={title} bgcolor={bgcolor} tm={tm} />
+        <RateTblHead bulk={bulk} title={title} bgcolor={bgcolor} tm={tm} />
         <TableBody>
           {data.map((v) => {
             return (
@@ -23,6 +23,7 @@ export const RateTbl = (props) => {
                 <RateTblRow
                   id={`${v.atclcode}-${v.scode}`}
                   key={`${v.atclcode}-${v.scode}`}
+                  bulk={bulk}
                   itm={v}
                 />
               )
@@ -35,7 +36,8 @@ export const RateTbl = (props) => {
 };
 
 const RateTblHead = (props) => {
-  const { title, bgcolor, tm, ...other } = props;
+  const { bulk, title, tm, ...other } = props;
+  const bgcolor = bulk ? "#57ba98" : "#f2f2f2";
   return (
     <TableHead>
       <TableRow>
@@ -85,7 +87,7 @@ const RateTblHead = (props) => {
 };
 
 const RateTblRow = (props) => {
-  const { itm, ...other } = props;
+  const { itm, bulk, ...other } = props;
 
   return (
     <TableRow
@@ -111,9 +113,11 @@ const RateTblRow = (props) => {
             src={`./flag/${itm.atclcode}.svg`}
           />
           <Typography>{itm.chid}</Typography>
-          <Typography color={grey[800]} variant="caption">
-            {itm.sname}
-          </Typography>
+          {bulk && (
+            <Typography color={grey[800]} variant="caption">
+              {itm.sname}
+            </Typography>
+          )}
         </Box>
       </TableCell>
       <RateTblCell amnt={itm.bid} bgcolor={colorset[0]} />

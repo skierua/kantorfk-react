@@ -12,11 +12,6 @@
 
 # production
 /build
-/api/*.zip
-/api/test*.http
-/api/v0
-/api/v1
-/api/va1
 
 # misc
 .DS_Store
