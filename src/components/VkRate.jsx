@@ -5,7 +5,7 @@ import { grey } from "@mui/material/colors";
 import { RateTbl, RateTblOther } from "./VkRateTbl";
 // import { Icon_Flag_BG, Icon_Flag_US } from "material-ui-country-flags";
 const colorset = ["#f2f2f2", "#57ba98", grey[800]];
-// const headBgColor = "#f2f2f2";
+const headBgColor = "#f2f2f2";
 
 /**
  *
@@ -34,7 +34,8 @@ export const VkRate = (props) => {
         <RateTbl
           data={data.filter((v) => Number(v.domestic) == 2 && v.prc === "")}
           title={"РОЗДРІБ основні валюти"}
-          bulk={false}
+          showCSub={false}
+          bgcolor={headBgColor}
           tm={lch()}
         />
         <RateTblOther
