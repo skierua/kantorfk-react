@@ -1,5 +1,13 @@
 import React from "react";
-import { Alert, Avatar, Box, Grid, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Grid,
+  Stack,
+  TableFooter,
+  Typography,
+} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,11 +19,11 @@ import { grey } from "@mui/material/colors";
 const colorset = ["#f2f2f2", "#57ba98", grey[800]];
 
 export const RateTbl = (props) => {
-  const { data, bulk, title, bgcolor, tm, ...other } = props;
+  const { data, title, footer, showCSub, bgcolor, tm, ...other } = props;
   return (
     <TableContainer component={Paper}>
       <Table size="small" aria-label="a dense table">
-        <RateTblHead bulk={bulk} title={title} bgcolor={bgcolor} tm={tm} />
+        <RateTblHead title={title} bgcolor={bgcolor} tm={tm} />
         <TableBody>
           {data.map((v) => {
             return (
@@ -23,23 +31,26 @@ export const RateTbl = (props) => {
                 <RateTblRow
                   id={`${v.atclcode}-${v.scode}`}
                   key={`${v.atclcode}-${v.scode}`}
-                  bulk={bulk}
+                  sub={showCSub}
                   itm={v}
                 />
               )
             );
           })}
         </TableBody>
+        {footer !== undefined && footer !== "" && (
+          <RateTblFooter footer={footer} />
+        )}
       </Table>
     </TableContainer>
   );
 };
 
 const RateTblHead = (props) => {
-  const { bulk, title, tm, ...other } = props;
-  const bgcolor = bulk ? "#57ba98" : "#f2f2f2";
+  const { title, bgcolor, tm, ...other } = props;
+  // const bgcolor = bulk ? "#57ba98" : "#f2f2f2";
   return (
-    <TableHead>
+    <TableHead {...other}>
       <TableRow>
         <TableCell align="left" colSpan={"3"} bgcolor={bgcolor}>
           <Stack
@@ -85,9 +96,22 @@ const RateTblHead = (props) => {
     </TableHead>
   );
 };
+const RateTblFooter = (props) => {
+  const { footer, bgcolor, ...other } = props;
+  // const bgcolor = bulk ? "#57ba98" : "#f2f2f2";
+  return (
+    <TableFooter {...other}>
+      <TableRow>
+        <TableCell align="center" colSpan={"3"}>
+          <Typography color={grey[600]}>{footer}</Typography>
+        </TableCell>
+      </TableRow>
+    </TableFooter>
+  );
+};
 
 const RateTblRow = (props) => {
-  const { itm, bulk, ...other } = props;
+  const { itm, sub, ...other } = props;
 
   return (
     <TableRow
@@ -113,7 +137,7 @@ const RateTblRow = (props) => {
             src={`./flag/${itm.atclcode}.svg`}
           />
           <Typography>{itm.chid}</Typography>
-          {bulk && (
+          {sub && (
             <Typography color={grey[800]} variant="caption">
               {itm.sname}
             </Typography>

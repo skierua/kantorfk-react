@@ -47,6 +47,13 @@ function App(props) {
     });
   };
 
+  const onRates_loaded = (data) => {
+    if (page === 0 && data.filter((v) => v.shop === dfltBulk).length === 0) {
+      setPage(1);
+    }
+    setRates(sortRates(data));
+  };
+
   const loadRate = async () => {
     // console.log(`#8y3 App/loadRate started`);
     await getData(
@@ -77,8 +84,13 @@ function App(props) {
       (b) => setError(b)
     );
   };
+
   useEffect(() => {
-    if (page === 0 && rates.filter((v) => v.shop === dfltBulk).length === 0) {
+    if (
+      page === 0 &&
+      rates.length !== 0 &&
+      rates.filter((v) => v.shop === dfltBulk).length === 0
+    ) {
       setPage(1);
     }
     return () => {};

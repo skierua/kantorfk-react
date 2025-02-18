@@ -3,7 +3,7 @@ import { Alert, Box, Stack, Typography } from "@mui/material";
 import { RateTbl } from "./VkRateTbl";
 // import { Icon_Flag_BG, Icon_Flag_US } from "material-ui-country-flags";
 
-// const headBgColor = "#57ba98";
+const headBgColor = "#57ba98";
 
 /**
  *
@@ -30,23 +30,32 @@ export const VkBulk = (props) => {
     <Box {...other}>
       <Stack gap={2} width="100%">
         <RateTbl
-          data={data.filter((v) => Number(v.domestic) === 2 && v.prc === "")}
+          data={data.filter(
+            (v) =>
+              (Number(v.domestic) === 2 || Number(v.domestic) === 4) &&
+              v.prc === ""
+          )}
           title={"ГУРТ основні валюти"}
-          bulk={true}
+          footer={"працюємо з пошкодженими купюрами"}
+          showCSub={true}
+          bgcolor={headBgColor}
           tm={lch()}
         />
         <RateTbl
           data={data.filter((v) => Number(v.domestic) === 6 && v.prc === "")}
           title={"Конвертація"}
-          bulk={true}
-          // tm={lch()}
+          footer={"кроскурси вказано для білого долара"}
+          showCSub={true}
+          bgcolor={headBgColor}
         />
         {data.filter((v) => Number(v.domestic) === 8 && v.prc === "").length !==
           0 && (
           <RateTbl
             data={data.filter((v) => Number(v.domestic) === 8 && v.prc === "")}
             title={"Крипта"}
-            bulk={true}
+            footer={"розрахунки проводться через білий долар"}
+            showCSub={true}
+            bgcolor={headBgColor}
           />
         )}
         <Alert
