@@ -40,7 +40,7 @@ export const VkHeader = () => {
             alt="Logo."
             src="./img/logo-kfk.png"
           />
-          <Box>
+          {/* <Box>
             <Stack direction={"row"} gap={0.5}>
               <CallIcon fontSize="small" />
               09 600 13 600
@@ -56,7 +56,7 @@ export const VkHeader = () => {
                 <InstagramIcon />
               </a>
             </Stack>
-          </Box>
+          </Box> */}
         </Toolbar>
       </Container>
       {trigger && (
