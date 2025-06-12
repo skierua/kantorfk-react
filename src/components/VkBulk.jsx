@@ -26,6 +26,14 @@ export const VkBulk = (props) => {
     })} ${new Date(d).toLocaleTimeString().substring(0, 5)}`;
   };
 
+  /*  const crypto = () => {
+    return data.filter(
+      (v) =>
+        Number(v.domestic) === 8 && v.prc === "" && v.bid !== "" && v.ask !== ""
+    );
+  };
+  console.log(crypto());
+*/
   return (
     <Box {...other}>
       <Stack gap={2} width="100%">
@@ -48,10 +56,21 @@ export const VkBulk = (props) => {
           showCSub={true}
           bgcolor={headBgColor}
         />
-        {data.filter((v) => Number(v.domestic) === 8 && v.prc === "").length !==
-          0 && (
+        {data.filter(
+          (v) =>
+            Number(v.domestic) === 8 &&
+            v.prc === "" &&
+            v.bid !== "" &&
+            v.ask !== ""
+        ).length !== 0 && (
           <RateTbl
-            data={data.filter((v) => Number(v.domestic) === 8 && v.prc === "")}
+            data={data.filter(
+              (v) =>
+                Number(v.domestic) === 8 &&
+                v.prc === "" &&
+                v.bid !== "" &&
+                v.ask !== ""
+            )}
             title={"Крипта"}
             footer={"розрахунки проводться через білий долар"}
             showCSub={true}

@@ -33,45 +33,19 @@ function App(props) {
   const [error, setError] = useState(null);
   const prevOfferCount = useRef(0);
 
-  // const delayRate = 200; // 200sec
-  // const delayOffer = 210; // 200sec
   const dfltBulk = "BULK";
   const dfltKnt = "CITY";
-  const delayRate = 35; // delay for rates reload
-  const delayOffer = 25; // delay for offers reload
+  const delay = 35000; // milisec delay for reload
+  // const delayRate = 35; // delay for rates reload
+  // const delayOffer = 25; // delay for offers reload
+
+  let tmrUpd;
 
   const sortRates = (v) => {
     // console.log(`#43y App/sortRates started` + JSON.stringify(v));
     return v.sort((a, b) => {
       return Number(a.sortorder) - Number(b.sortorder);
     });
-  };
-
-  const onRates_loaded = (data) => {
-    if (page === 0 && data.filter((v) => v.shop === dfltBulk).length === 0) {
-      setPage(1);
-    }
-    setRates(sortRates(data));
-  };
-
-  const loadRate = async () => {
-    // console.log(`#8y3 App/loadRate started`);
-    await getData(
-      "/rates",
-      "reqid=sse2",
-      (d) => setRates(sortRates(d)),
-      (b) => setError(b)
-    );
-  };
-
-  const loadOffer = async () => {
-    // console.log(`#12u App/loadOffer started`);
-    await getData(
-      "/offers",
-      "reqid=sse",
-      (d) => setOffers(d),
-      (b) => setError(b)
-    );
   };
 
   const handleArchive_reload = async (v) => {
@@ -86,6 +60,7 @@ function App(props) {
   };
 
   useEffect(() => {
+    // console.log(`#q9b App/useEffect 123 started`);
     if (
       page === 0 &&
       rates.length !== 0 &&
@@ -94,21 +69,65 @@ function App(props) {
       setPage(1);
     }
     return () => {};
-  }, [rates]);
+  }, [page, rates]);
 
   useEffect(() => {
-    // console.log(`#34hn useEffect started`);
-    // return;
-    loadRate();
-    loadOffer();
-    const tmrRate = setInterval(loadRate, 1000 * delayRate); //
-    const tmrOffer = setInterval(loadOffer, 1000 * delayOffer); //
-    // const tmr = setInterval(load, 5000); // for testing
+    // console.log(`#34hn useEffect RATES started`);
+    tmrUpd = setTimeout(async function loadData() {
+      // console.log(`#34hn render GETDATA`);
+      await getData(
+        "/rates",
+        "reqid=sse2",
+        (d) => setRates(sortRates(d)),
+        (b) => setError(b)
+      );
+      await getData(
+        "/offers",
+        "reqid=sse",
+        (d) => setOffers(d),
+        (b) => setError(b)
+      );
+      tmrUpd = setTimeout(loadData, delay); // (*)
+    }, 0);
     return () => {
-      clearInterval(tmrRate);
-      clearInterval(tmrOffer);
+      clearTimeout(tmrUpd);
     };
   }, []);
+
+  useEffect(() => {
+    const onVisibility_changed = () => {
+      if (document.visibilityState === "visible") {
+        tmrUpd = setTimeout(async function loadData() {
+          // console.log(`#904u visibility GETDATA`);
+          await getData(
+            "/rates",
+            "reqid=sse2",
+            (d) => setRates(sortRates(d)),
+            (b) => setError(b)
+          );
+          await getData(
+            "/offers",
+            "reqid=sse",
+            (d) => setOffers(d),
+            (b) => setError(b)
+          );
+          tmrUpd = setTimeout(loadData, delay); // (*)
+        }, 0);
+        // console.log(`#e8y useEffect turns visibile `);
+      } else {
+        clearTimeout(tmrUpd);
+        // console.log(`#9wj useEffect turns HIDDEN `);
+      }
+    };
+
+    // Add the event listener to the document
+    document.addEventListener("visibilitychange", onVisibility_changed);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility_changed);
+    };
+  }, []); // Empty dependency array ensures the effect runs only once on mount
 
   /*useEffect(() => {
     loadRate();
@@ -137,6 +156,8 @@ function App(props) {
     }
   };
 
+  // console.log(rates.filter((v) => v.shop === dfltBulk));
+
   return (
     <Stack gap={1}>
       <VkHeader />
@@ -152,8 +173,14 @@ function App(props) {
             <BottomNavigationAction
               label="ГУРТ"
               icon={<PriceChangeIcon />}
+              // disabled={true}
               disabled={!rates.filter((v) => v.shop === dfltBulk).length}
             />
+            {/* <BottomNavigationAction
+              label=""
+              // icon={<PriceChangeIcon />}
+              disabled={true}
+            /> */}
             <BottomNavigationAction
               label="Роздріб"
               icon={<PriceChangeIcon />}
@@ -164,7 +191,7 @@ function App(props) {
                 <Badge
                   badgeContent={offers.length}
                   color={
-                    page === 1 || prevOfferCount.current === offers.length
+                    page === 2 || prevOfferCount.current === offers.length
                       ? "info"
                       : "warning"
                   }
