@@ -40,7 +40,7 @@ export const VkHeader = () => {
             alt="Logo."
             src="./img/logo-kfk.png"
           />
-          {/* <Box>
+          <Box>
             <Stack direction={"row"} gap={0.5}>
               <CallIcon fontSize="small" />
               09 600 13 600
@@ -49,14 +49,14 @@ export const VkHeader = () => {
               <a href="https://www.t.me/kantorfk" className="telegram social">
                 <TelegramIcon />
               </a>
-              <a
+              {/* <a
                 href="https://www.instagram.com/kantorfk"
                 className="instagram social"
               >
                 <InstagramIcon />
-              </a>
+              </a> */}
             </Stack>
-          </Box> */}
+          </Box>
         </Toolbar>
       </Container>
       {trigger && (
@@ -94,12 +94,12 @@ export const VkHeader = () => {
                 <a href="https://www.t.me/kantorfk" className="telegram social">
                   <TelegramIcon />
                 </a>
-                <a
+                {/* <a
                   href="https://www.instagram.com/kantorfk"
                   className="instagram social"
                 >
                   <InstagramIcon />
-                </a>
+                </a> */}
               </Stack>
             </Stack>
           </AppBar>
